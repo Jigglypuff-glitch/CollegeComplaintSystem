@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create a CampusCare account to submit and track college complaints.">
+
+    <title>Create Account | CampusCare</title>
+
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/main.js" defer></script>
+    <script src="/js/register.js" defer></script>
+</head>
+
+<body>
+    <header class="site-header">
+        <a href="/" class="brand" aria-label="CampusCare home">
+            <span class="brand-logo">C</span>
+            CampusCare
+        </a>
+
+        <nav class="navigation" aria-label="Main navigation">
+            <a href="/">Home</a>
+            <a href="/login.html" class="button button-secondary">Login</a>
+        </nav>
+    </header>
+
+    <main class="auth-layout">
+        <section class="auth-intro">
+            <p class="eyebrow" style="color: #c7d2fe;">JOIN CAMPUSCARE</p>
+
+            <h1>Make your voice count.</h1>
+
+            <p>
+                Create your account to raise campus concerns, monitor
+                complaint status, and help improve your college community.
+            </p>
+        </section>
+
+        <section class="auth-content">
+            <div class="auth-card">
+                <h2>Create an account</h2>
+
+                <p>Enter your details to get started.</p>
+
+                <div
+                    id="register-message"
+                    class="alert hidden"
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+                <form
+                    id="register-form"
+                    class="form"
+                    data-validate
+                    action="/api/auth/register"
+                    method="POST"
+                >
+                    <div class="form-group">
+                        <label for="fullName">Full name</label>
+
+                        <input
+                            type="text"
+                            id="fullName"
+                            name="fullName"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                            minlength="2"
+                            maxlength="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentId">Student ID</label>
+
+                        <input
+                            type="text"
+                            id="studentId"
+                            name="studentId"
+                            placeholder="Enter your college student ID"
+                            autocomplete="off"
+                            maxlength="50"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">College email address</label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@college.edu"
+                            autocomplete="email"
+                            maxlength="254"
+                            required
+                        >
+
+                        <span class="form-help">
+                            Use an email address you can access.
+                        </span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department">Department</label>
+
+                        <select id="department" name="department" required>
+                            <option value="">Select your department</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Civil">Civil</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Business Administration">Business Administration</option>
+                            <option value="Commerce">Commerce</option>
+                            <option value="Arts and Humanities">Arts and Humanities</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            maxlength="128"
+                            required
+                        >
+
+                        <span class="form-help">
+                            Use at least 8 characters.
+                        </span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm password</label>
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            placeholder="Enter your password again"
+                            autocomplete="new-password"
+                            minlength="8"
+                            maxlength="128"
+                            required
+                        >
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="button button-primary button-full"
+                    >
+                        Create Account →
+                    </button>
+                </form>
+
+                <p class="auth-switch">
+                    Already have an account?
+                    <a href="/login.html">Sign in</a>
+                </p>
+
+                <p class="auth-switch">
+                    <a href="/">← Back to home</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© <span id="current-year"></span> CampusCare.</p>
+        <p>College Complaint System</p>
+    </footer>
+</body>
+</html>

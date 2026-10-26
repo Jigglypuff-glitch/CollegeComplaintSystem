@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Submit a campus complaint using CampusCare.">
+    <title>Submit Complaint | CampusCare</title>
+
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/main.js" defer></script>
+</head>
+
+<body>
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+        <a href="/" class="brand">
+            <span class="brand-logo">C</span>
+            CampusCare
+        </a>
+
+        <p class="sidebar-label">Student Portal</p>
+
+        <nav class="sidebar-nav" aria-label="Student navigation">
+            <a href="/student-dashboard.html">▦ Dashboard</a>
+            <a href="/submit-complaint.html" class="active" aria-current="page">＋ Submit Complaint</a>
+            <a href="/my-complaints.html">☷ My Complaints</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/login.html" class="button button-secondary button-full">Sign Out</a>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+        <header class="dashboard-topbar">
+            <div>
+                <h1>Submit a Complaint</h1>
+                <p>Describe your concern so the appropriate team can review it.</p>
+            </div>
+            <a href="/student-dashboard.html" class="button button-secondary">← Dashboard</a>
+        </header>
+
+        <section class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Complaint Details</h2>
+                    <p class="mt-1">Fields marked * are required.</p>
+                </div>
+            </div>
+
+            <div id="form-message" class="alert hidden" role="status" aria-live="polite"></div>
+
+            <form id="complaint-form" class="form" data-validate>
+                <div class="form-group">
+                    <label for="title">Complaint title *</label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="Briefly describe the issue"
+                        minlength="5"
+                        maxlength="120"
+                        required
+                    >
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <select id="category" name="category" required>
+                            <option value="">Choose a category</option>
+                            <option value="Facilities">Facilities and Maintenance</option>
+                            <option value="Academics">Academics and Teaching</option>
+                            <option value="Examinations">Examinations and Results</option>
+                            <option value="IT Services">IT and Internet Services</option>
+                            <option value="Hostel">Hostel and Accommodation</option>
+                            <option value="Library">Library</option>
+                            <option value="Cafeteria">Cafeteria and Food Services</option>
+                            <option value="Administration">Administration</option>
+                            <option value="Harassment">Harassment or Misconduct</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priority">Priority *</label>
+                        <select id="priority" name="priority" required>
+                            <option value="">Select priority</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location on campus</label>
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        placeholder="e.g. Library, Block B, Room 204"
+                        maxlength="150"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Complaint description *</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Explain what happened, where it happened, and any details that may help resolve the issue."
+                        minlength="20"
+                        maxlength="5000"
+                        required
+                    ></textarea>
+                    <span class="form-help">Please provide at least 20 characters.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="evidence">Supporting document (optional)</label>
+                    <input
+                        type="file"
+                        id="evidence"
+                        name="evidence"
+                        accept=".pdf,.png,.jpg,.jpeg"
+                    >
+                    <span class="form-help">
+                        PDF or image, maximum 5 MB. File upload will be enabled on the backend.
+                    </span>
+                </div>
+
+                <div class="checkbox-row">
+                    <input type="checkbox" id="confirm" name="confirm" required>
+                    <label for="confirm">
+                        I confirm that the information provided is accurate to the best of my knowledge. *
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <button type="reset" class="button button-secondary">Clear Form</button>
+                    <button type="submit" class="button button-primary">Submit Complaint →</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("complaint-form");
+    const message = document.getElementById("form-message");
+    const evidence = document.getElementById("evidence");
+
+    // Check the selected file's type and size in the browser.
+    evidence.addEventListener("change", () => {
+        const file = evidence.files[0];
+
+        if (!file) return;
+
+        const allowedTypes = [
+            "application/pdf",
+            "image/png",
+            "image/jpeg"
+        ];
+
+        const maxSize = 5 * 1024 * 1024;
+
+        if (!allowedTypes.includes(file.type) || file.size > maxSize) {
+            evidence.setCustomValidity(
+                "Choose a PDF, PNG, or JPEG file no larger than 5 MB."
+            );
+            evidence.reportValidity();
+        } else {
+            evidence.setCustomValidity("");
+        }
+    });
+
+    form.addEventListener("reset", () => {
+        message.className = "alert hidden";
+        message.textContent = "";
+        evidence.setCustomValidity("");
+    });
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        // Demo only: no complaint is stored or sent to a server yet.
+        message.className = "alert alert-info";
+        message.textContent =
+            "Form validated successfully. Complaint submission will be enabled when the backend API is connected.";
+
+        message.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="View, search, and track your college complaints in CampusCare.">
+    <title>My Complaints | CampusCare</title>
+
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/main.js" defer></script>
+</head>
+
+<body>
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+        <a href="/" class="brand">
+            <span class="brand-logo">C</span>
+            CampusCare
+        </a>
+
+        <p class="sidebar-label">Student Portal</p>
+
+        <nav class="sidebar-nav" aria-label="Student navigation">
+            <a href="/student-dashboard.html">▦ Dashboard</a>
+            <a href="/submit-complaint.html">＋ Submit Complaint</a>
+            <a href="/my-complaints.html" class="active" aria-current="page">☷ My Complaints</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/login.html" class="button button-secondary button-full">Sign Out</a>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <header class="dashboard-topbar">
+            <div>
+                <h1>My Complaints</h1>
+                <p>Search your submissions and keep track of their progress.</p>
+            </div>
+
+            <a href="/submit-complaint.html" class="button button-primary">
+                ＋ New Complaint
+            </a>
+        </header>
+
+        <section class="stats-grid" aria-label="Complaint summary">
+            <article class="stat-card">
+                <p>Total Results</p>
+                <h3 id="total-count">0</h3>
+            </article>
+
+            <article class="stat-card">
+                <p>Pending</p>
+                <h3 id="pending-count">0</h3>
+            </article>
+
+            <article class="stat-card">
+                <p>In Progress</p>
+                <h3 id="progress-count">0</h3>
+            </article>
+
+            <article class="stat-card">
+                <p>Resolved</p>
+                <h3 id="resolved-count">0</h3>
+            </article>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Complaint History</h2>
+                    <p class="mt-1">Use the filters to find a submission.</p>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <input
+                    type="search"
+                    id="search-input"
+                    placeholder="Search title or complaint ID..."
+                    aria-label="Search complaints"
+                >
+
+                <select id="status-filter" aria-label="Filter by status">
+                    <option value="">All statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+
+                <select id="category-filter" aria-label="Filter by category">
+                    <option value="">All categories</option>
+                    <option value="Facilities">Facilities</option>
+                    <option value="Academics">Academics</option>
+                    <option value="Examinations">Examinations</option>
+                    <option value="IT Services">IT Services</option>
+                    <option value="Hostel">Hostel</option>
+                    <option value="Library">Library</option>
+                    <option value="Cafeteria">Cafeteria</option>
+                    <option value="Administration">Administration</option>
+                    <option value="Harassment">Harassment</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <button type="button" id="clear-filters" class="button button-secondary">
+                    Clear Filters
+                </button>
+            </div>
+
+            <div id="complaints-message" class="alert alert-info" role="status" aria-live="polite">
+                Showing demo data. Real complaints will load after backend integration.
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Complaint ID</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Date Submitted</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="complaints-table-body"></tbody>
+                </table>
+            </div>
+
+            <div id="empty-state" class="empty-state hidden">
+                <h3 id="empty-title">No complaints found</h3>
+                <p id="empty-description">
+                    Try changing your search or filters.
+                </p>
+                <a href="/submit-complaint.html" class="button button-primary">
+                    Submit a Complaint
+                </a>
+            </div>
+        </section>
+
+        <!-- Complaint details dialog -->
+        <dialog id="complaint-dialog" style="width: min(600px, calc(100% - 32px)); border: 1px solid #e2e8f0; border-radius: 16px; padding: 28px; margin: auto;">
+            <div class="panel-header">
+                <h2 id="dialog-title">Complaint Details</h2>
+                <button type="button" id="close-dialog" class="button button-secondary button-small">
+                    Close
+                </button>
+            </div>
+
+            <div id="dialog-content"></div>
+        </dialog>
+
+    </main>
+</div>
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", () => {
+    /*
+     * Temporary demonstration records.
+     * These will be replaced with data from the authenticated API.
+     */
+    const complaints = [
+        {
+            id: "CMP-1001",
+            title: "Wi-Fi not working in the library",
+            category: "IT Services",
+            date: "2026-10-12",
+            priority: "Medium",
+            status: "Pending",
+            location: "Central Library, Second Floor",
+            description: "The campus Wi-Fi connection has been unavailable in the library for several days, making it difficult to access online study materials.",
+            resolution: ""
+        },
+        {
+            id: "CMP-1002",
+            title: "Broken classroom projector",
+            category: "Facilities",
+            date: "2026-10-15",
+            priority: "High",
+            status: "In Progress",
+            location: "Block B, Room 204",
+            description: "The classroom projector does not display an image. This is affecting presentations during lectures.",
+            resolution: ""
+        },
+        {
+            id: "CMP-1003",
+            title: "Library opening hours",
+            category: "Library",
+            date: "2026-10-18",
+            priority: "Low",
+            status: "Resolved",
+            location: "Central Library",
+            description: "The published opening hours were unclear during the examination period.",
+            resolution: "The library has updated its examination-period opening-hours notice."
+        },
+        {
+            id: "CMP-1004",
+            title: "Water dispenser needs repair",
+            category: "Facilities",
+            date: "2026-10-20",
+            priority: "Medium",
+            status: "Pending",
+            location: "Block A, Ground Floor",
+            description: "The water dispenser near the main corridor is not dispensing water.",
+            resolution: ""
+        }
+    ];
+
+    const searchInput = document.getElementById("search-input");
+    const statusFilter = document.getElementById("status-filter");
+    const categoryFilter = document.getElementById("category-filter");
+    const tableBody = document.getElementById("complaints-table-body");
+    const message = document.getElementById("complaints-message");
+    const emptyState = document.getElementById("empty-state");
+    const dialog = document.getElementById("complaint-dialog");
+
+    const statusClass = {
+        "Pending": "status-pending",
+        "In Progress": "status-in-progress",
+        "Resolved": "status-resolved",
+        "Rejected": "status-rejected"
+    };
+
+    function formatDate(dateString) {
+        const date = new Date(dateString + "T00:00:00");
+
+        return new Intl.DateTimeFormat(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }).format(date);
+    }
+
+    function createCell(text) {
+        const cell = document.createElement("td");
+        cell.textContent = text;
+        return cell;
+    }
+
+    function updateStatistics(records) {
+        document.getElementById("total-count").textContent = records.length;
+
+        document.getElementById("pending-count").textContent =
+            records.filter(c => c.status === "Pending").length;
+
+        document.getElementById("progress-count").textContent =
+            records.filter(c => c.status === "In Progress").length;
+
+        document.getElementById("resolved-count").textContent =
+            records.filter(c => c.status === "Resolved").length;
+    }
+
+    function renderComplaints() {
+        const search = searchInput.value.trim().toLowerCase();
+        const selectedStatus = statusFilter.value;
+        const selectedCategory = categoryFilter.value;
+
+        const filtered = complaints.filter(complaint => {
+            const matchesSearch =
+                complaint.title.toLowerCase().includes(search) ||
+                complaint.id.toLowerCase().includes(search);
+
+            const matchesStatus =
+                !selectedStatus || complaint.status === selectedStatus;
+
+            const matchesCategory =
+                !selectedCategory || complaint.category === selectedCategory;
+
+            return matchesSearch && matchesStatus && matchesCategory;
+        });
+
+        tableBody.replaceChildren();
+        updateStatistics(filtered);
+
+        filtered.forEach(complaint => {
+            const row = document.createElement("tr");
+
+            row.appendChild(createCell(complaint.id));
+            row.appendChild(createCell(complaint.title));
+            row.appendChild(createCell(complaint.category));
+            row.appendChild(createCell(formatDate(complaint.date)));
+            row.appendChild(createCell(complaint.priority));
+
+            const statusCell = document.createElement("td");
+            const badge = document.createElement("span");
+
+            badge.className = "status " +
+                (statusClass[complaint.status] || "status-open");
+            badge.textContent = complaint.status;
+
+            statusCell.appendChild(badge);
+            row.appendChild(statusCell);
+
+            const actionCell = document.createElement("td");
+            const viewButton = document.createElement("button");
+
+            viewButton.type = "button";
+            viewButton.className = "button button-secondary button-small";
+            viewButton.textContent = "View Details";
+            viewButton.addEventListener("click", () => {
+                showDetails(complaint.id);
+            });
+
+            actionCell.appendChild(viewButton);
+            row.appendChild(actionCell);
+            tableBody.appendChild(row);
+        });
+
+        emptyState.classList.toggle("hidden", filtered.length > 0);
+
+        if (filtered.length === 0) {
+            document.getElementById("empty-title").textContent =
+                complaints.length === 0
+                    ? "No complaints yet"
+                    : "No matching complaints";
+
+            document.getElementById("empty-description").textContent =
+                complaints.length === 0
+                    ? "Submit a complaint to get started."
+                    : "Try a different search term or clear your filters.";
+        }
+
+        message.textContent =
+            `Showing ${filtered.length} of ${complaints.length} demo complaints.`;
+    }
+
+    function showDetails(complaintId) {
+        const complaint = complaints.find(c => c.id === complaintId);
+
+        if (!complaint) return;
+
+        const content = document.getElementById("dialog-content");
+        content.replaceChildren();
+
+        const details = [
+            ["Complaint ID", complaint.id],
+            ["Title", complaint.title],
+            ["Category", complaint.category],
+            ["Date submitted", formatDate(complaint.date)],
+            ["Priority", complaint.priority],
+            ["Status", complaint.status],
+            ["Location", complaint.location],
+            ["Description", complaint.description],
+            ["Resolution", complaint.resolution || "No resolution update yet."]
+        ];
+
+        details.forEach(([label, value]) => {
+            const item = document.createElement("div");
+            item.className = "detail-item";
+
+            const heading = document.createElement("label");
+            heading.textContent = label;
+
+            const text = document.createElement("p");
+            text.textContent = value;
+
+            item.append(heading, text);
+            content.appendChild(item);
+        });
+
+        dialog.showModal();
+    }
+
+    searchInput.addEventListener("input", renderComplaints);
+    statusFilter.addEventListener("change", renderComplaints);
+    categoryFilter.addEventListener("change", renderComplaints);
+
+    document.getElementById("clear-filters").addEventListener("click", () => {
+        searchInput.value = "";
+        statusFilter.value = "";
+        categoryFilter.value = "";
+        renderComplaints();
+    });
+
+    document.getElementById("close-dialog").addEventListener("click", () => {
+        dialog.close();
+    });
+
+    dialog.addEventListener("click", event => {
+        if (event.target === dialog) {
+            dialog.close();
+        }
+    });
+
+    // Support URLs such as my-complaints.html?status=Resolved
+    const requestedStatus = new URLSearchParams(window.location.search).get("status");
+
+    if (["Pending", "In Progress", "Resolved", "Rejected"].includes(requestedStatus)) {
+        statusFilter.value = requestedStatus;
+    }
+
+    renderComplaints();
+});
+</script>
+</body>
+</html>

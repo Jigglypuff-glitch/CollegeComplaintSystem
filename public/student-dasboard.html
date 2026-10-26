@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Student dashboard for managing college complaints.">
+    <title>Student Dashboard | CampusCare</title>
+
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/main.js" defer></script>
+</head>
+
+<body>
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+        <a href="/" class="brand">
+            <span class="brand-logo">C</span>
+            CampusCare
+        </a>
+
+        <p class="sidebar-label">Student Portal</p>
+
+        <nav class="sidebar-nav" aria-label="Student navigation">
+            <a href="/student-dashboard.html" class="active" aria-current="page">▦ Dashboard</a>
+            <a href="/submit-complaint.html">＋ Submit Complaint</a>
+            <a href="/my-complaints.html">☷ My Complaints</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/login.html" class="button button-secondary button-full">Sign Out</a>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+        <header class="dashboard-topbar">
+            <div>
+                <h1>Student Dashboard</h1>
+                <p>Welcome back! Here's an overview of your complaints.</p>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" id="student-avatar">S</div>
+                <div>
+                    <strong id="student-name">Student</strong>
+                    <p>Student Account</p>
+                </div>
+            </div>
+        </header>
+
+        <div id="dashboard-message" class="alert alert-info"
+             role="status" aria-live="polite">
+            Dashboard ready. Live complaint data will appear after backend integration.
+        </div>
+
+        <section class="stats-grid" aria-label="Complaint statistics">
+            <article class="stat-card">
+                <p>Total Complaints</p>
+                <h3 id="total-complaints">0</h3>
+            </article>
+            <article class="stat-card">
+                <p>Pending</p>
+                <h3 id="pending-complaints">0</h3>
+            </article>
+            <article class="stat-card">
+                <p>In Progress</p>
+                <h3 id="in-progress-complaints">0</h3>
+            </article>
+            <article class="stat-card">
+                <p>Resolved</p>
+                <h3 id="resolved-complaints">0</h3>
+            </article>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h2>Quick Actions</h2>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">＋</div>
+                    <h3>Submit a Complaint</h3>
+                    <p>Report an issue involving campus facilities, academics, or student services.</p>
+                    <a href="/submit-complaint.html" class="button button-primary mt-2">Submit Now →</a>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">☷</div>
+                    <h3>Track Complaints</h3>
+                    <p>Review your submissions and check their latest status.</p>
+                    <a href="/my-complaints.html" class="button button-secondary mt-2">View Complaints →</a>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">✓</div>
+                    <h3>View Resolutions</h3>
+                    <p>Review complaints that have been addressed by college staff.</p>
+                    <a href="/my-complaints.html?status=Resolved" class="button button-secondary mt-2">View Resolved →</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Recent Complaints</h2>
+                    <p class="mt-1">Your latest submissions will appear here.</p>
+                </div>
+                <a href="/my-complaints.html" class="text-link">View All →</a>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Submitted</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-complaints-body">
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <h3>No complaints to display</h3>
+                                    <p>You haven't loaded any complaints yet.</p>
+                                    <a href="/submit-complaint.html" class="button button-primary">Submit Your First Complaint</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Temporary demo data. The backend API will replace this later.
+    const complaints = [];
+
+    const counts = {
+        total: complaints.length,
+        pending: complaints.filter(c => c.status === "Pending").length,
+        inProgress: complaints.filter(c => c.status === "In Progress").length,
+        resolved: complaints.filter(c => c.status === "Resolved").length
+    };
+
+    document.getElementById("total-complaints").textContent = counts.total;
+    document.getElementById("pending-complaints").textContent = counts.pending;
+    document.getElementById("in-progress-complaints").textContent = counts.inProgress;
+    document.getElementById("resolved-complaints").textContent = counts.resolved;
+
+    const name = document.getElementById("student-name").textContent.trim() || "Student";
+    document.getElementById("student-avatar").textContent = name.charAt(0).toUpperCase();
+});
+</script>
+</body>
+</html>

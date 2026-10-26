@@ -1,0 +1,513 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Staff dashboard for reviewing and managing college complaints.">
+    <title>Staff Dashboard | CampusCare</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/main.js" defer></script>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="/" class="brand">
+                <span class="brand-logo">C</span>
+                CampusCare
+            </a>
+
+            <p class="sidebar-label">Staff Portal</p>
+
+            <nav class="sidebar-nav" aria-label="Staff navigation">
+                <a href="#overview" class="active" aria-current="page">
+                    ▦ Dashboard
+                </a>
+                <a href="#complaint-queue">
+                    ☷ Complaint Queue
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a href="/login.html"
+                   class="button button-secondary button-full">
+                    Sign Out
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="dashboard-main">
+            <header class="dashboard-topbar">
+                <div>
+                    <h1>Staff Dashboard</h1>
+                    <p>Review complaints and manage their progress.</p>
+                </div>
+
+                <div class="user-info">
+                    <div class="user-avatar" aria-hidden="true">S</div>
+                    <div>
+                        <strong>Staff Member</strong>
+                        <p>Complaint Management</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Demo notice -->
+            <div class="alert alert-info" role="status">
+                <strong>Demo mode:</strong>
+                The complaints below are sample records. Status changes
+                are temporary and will reset when this page is refreshed.
+            </div>
+
+            <!-- Overview -->
+            <section id="overview" aria-labelledby="overview-heading">
+                <h2 id="overview-heading">Overview</h2>
+
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <p>Total Complaints</p>
+                        <h3 id="total-count">0</h3>
+                    </article>
+
+                    <article class="stat-card">
+                        <p>Pending</p>
+                        <h3 id="pending-count">0</h3>
+                    </article>
+
+                    <article class="stat-card">
+                        <p>In Progress</p>
+                        <h3 id="progress-count">0</h3>
+                    </article>
+
+                    <article class="stat-card">
+                        <p>Resolved</p>
+                        <h3 id="resolved-count">0</h3>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Complaint queue -->
+            <section id="complaint-queue"
+                     class="panel"
+                     aria-labelledby="queue-heading">
+
+                <div class="panel-header">
+                    <div>
+                        <h2 id="queue-heading">Complaint Queue</h2>
+                        <p>Search, review, and update submitted complaints.</p>
+                    </div>
+                    <span id="result-count">0 complaints</span>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="form-group">
+                        <label for="search-input">Search complaints</label>
+                        <input
+                            type="search"
+                            id="search-input"
+                            placeholder="Search ID, title, or location..."
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status-filter">Filter by status</label>
+                        <select id="status-filter">
+                            <option value="All">All statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category-filter">Filter by category</label>
+                        <select id="category-filter">
+                            <option value="All">All categories</option>
+                            <option value="Infrastructure">Infrastructure</option>
+                            <option value="IT Services">IT Services</option>
+                            <option value="Cleanliness">Cleanliness</option>
+                            <option value="Academic">Academic</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Complaint</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Priority</th>
+                                <th scope="col">Submitted</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="complaint-table-body">
+                            <!-- Generated by the inline JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="empty-state" class="empty-state hidden">
+                    <h3>No complaints found</h3>
+                    <p>Try changing your search or filter settings.</p>
+                </div>
+            </section>
+
+            <footer class="dashboard-footer">
+                <p>
+                    CampusCare Staff Portal ·
+                    <span id="current-year"></span>
+                </p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Complaint details dialog -->
+    <dialog id="complaint-dialog" aria-labelledby="dialog-title">
+        <div class="panel">
+            <div class="panel-header">
+                <h2 id="dialog-title">Complaint Details</h2>
+                <button type="button"
+                        id="close-dialog"
+                        class="button button-secondary button-small">
+                    Close
+                </button>
+            </div>
+
+            <div id="complaint-details">
+                <!-- Complaint details appear here -->
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Page-specific JavaScript -->
+    <script>
+        "use strict";
+
+        // Sample records for frontend development.
+        // Later, these will come from the backend API.
+        const complaints = [
+            {
+                id: "CMP-1001",
+                title: "Broken projector in Room 204",
+                category: "Infrastructure",
+                priority: "High",
+                location: "Building A, Room 204",
+                submitted: "2026-10-20",
+                status: "Pending",
+                description:
+                    "The classroom projector does not turn on during lectures.",
+                student: "Student A"
+            },
+            {
+                id: "CMP-1002",
+                title: "Campus Wi-Fi connection issue",
+                category: "IT Services",
+                priority: "Medium",
+                location: "Library, Second Floor",
+                submitted: "2026-10-21",
+                status: "In Progress",
+                description:
+                    "The Wi-Fi connection repeatedly disconnects while studying.",
+                student: "Student B"
+            },
+            {
+                id: "CMP-1003",
+                title: "Restroom cleanliness concern",
+                category: "Cleanliness",
+                priority: "Medium",
+                location: "Building B, Ground Floor",
+                submitted: "2026-10-22",
+                status: "Resolved",
+                description:
+                    "The restroom required additional cleaning and maintenance.",
+                student: "Student C"
+            },
+            {
+                id: "CMP-1004",
+                title: "Incorrect timetable information",
+                category: "Academic",
+                priority: "Low",
+                location: "Student Portal",
+                submitted: "2026-10-23",
+                status: "Pending",
+                description:
+                    "The timetable shows conflicting times for two classes.",
+                student: "Student D"
+            },
+            {
+                id: "CMP-1005",
+                title: "Library computer not working",
+                category: "IT Services",
+                priority: "High",
+                location: "Central Library",
+                submitted: "2026-10-24",
+                status: "In Progress",
+                description:
+                    "One of the library computers will not start.",
+                student: "Student E"
+            },
+            {
+                id: "CMP-1006",
+                title: "Request regarding classroom facilities",
+                category: "Other",
+                priority: "Low",
+                location: "Building C, Room 101",
+                submitted: "2026-10-25",
+                status: "Rejected",
+                description:
+                    "The request was reviewed and does not fall within the supported facilities service.",
+                student: "Student F"
+            }
+        ];
+
+        const tableBody = document.getElementById("complaint-table-body");
+        const searchInput = document.getElementById("search-input");
+        const statusFilter = document.getElementById("status-filter");
+        const categoryFilter = document.getElementById("category-filter");
+        const emptyState = document.getElementById("empty-state");
+        const resultCount = document.getElementById("result-count");
+
+        const dialog = document.getElementById("complaint-dialog");
+        const detailsContainer = document.getElementById("complaint-details");
+
+        // Escape text before inserting dynamic values into HTML.
+        function escapeHTML(value) {
+            const characters = {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            };
+
+            return String(value).replace(
+                /[&<>"']/g,
+                character => characters[character]
+            );
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                "Pending": "status-pending",
+                "In Progress": "status-in-progress",
+                "Resolved": "status-resolved",
+                "Rejected": "status-rejected"
+            };
+
+            return classes[status] || "status-open";
+        }
+
+        function updateStatistics() {
+            document.getElementById("total-count").textContent =
+                complaints.length;
+
+            document.getElementById("pending-count").textContent =
+                complaints.filter(item => item.status === "Pending").length;
+
+            document.getElementById("progress-count").textContent =
+                complaints.filter(item => item.status === "In Progress").length;
+
+            document.getElementById("resolved-count").textContent =
+                complaints.filter(item => item.status === "Resolved").length;
+        }
+
+        function getFilteredComplaints() {
+            const query = searchInput.value.trim().toLowerCase();
+            const selectedStatus = statusFilter.value;
+            const selectedCategory = categoryFilter.value;
+
+            return complaints.filter(complaint => {
+                const matchesSearch = [
+                    complaint.id,
+                    complaint.title,
+                    complaint.location
+                ].some(value => value.toLowerCase().includes(query));
+
+                const matchesStatus =
+                    selectedStatus === "All" ||
+                    complaint.status === selectedStatus;
+
+                const matchesCategory =
+                    selectedCategory === "All" ||
+                    complaint.category === selectedCategory;
+
+                return matchesSearch && matchesStatus && matchesCategory;
+            });
+        }
+
+        function renderComplaints() {
+            const filteredComplaints = getFilteredComplaints();
+
+            resultCount.textContent =
+                `${filteredComplaints.length} complaint` +
+                (filteredComplaints.length === 1 ? "" : "s");
+
+            emptyState.classList.toggle(
+                "hidden",
+                filteredComplaints.length !== 0
+            );
+
+            tableBody.innerHTML = filteredComplaints.map(complaint => `
+                <tr>
+                    <td>
+                        <strong>${escapeHTML(complaint.title)}</strong>
+                        <br>
+                        <span>${escapeHTML(complaint.id)}</span>
+                    </td>
+
+                    <td>${escapeHTML(complaint.category)}</td>
+
+                    <td>${escapeHTML(complaint.priority)}</td>
+
+                    <td>${escapeHTML(complaint.submitted)}</td>
+
+                    <td>
+                        <span class="status ${getStatusClass(complaint.status)}">
+                            ${escapeHTML(complaint.status)}
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="form-group">
+                            <label class="visually-hidden"
+                                   for="status-${escapeHTML(complaint.id)}">
+                                Update status for ${escapeHTML(complaint.id)}
+                            </label>
+
+                            <select
+                                id="status-${escapeHTML(complaint.id)}"
+                                data-status-id="${escapeHTML(complaint.id)}"
+                                aria-label="Update status for ${escapeHTML(complaint.id)}">
+                                ${["Pending", "In Progress", "Resolved", "Rejected"]
+                                    .map(status => `
+                                        <option value="${status}"
+                                            ${complaint.status === status ? "selected" : ""}>
+                                            ${status}
+                                        </option>
+                                    `).join("")}
+                            </select>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="button button-secondary button-small"
+                            data-view-id="${escapeHTML(complaint.id)}">
+                            View
+                        </button>
+                    </td>
+                </tr>
+            `).join("");
+
+            updateStatistics();
+        }
+
+        function showComplaintDetails(complaintId) {
+            const complaint = complaints.find(
+                item => item.id === complaintId
+            );
+
+            if (!complaint) return;
+
+            detailsContainer.innerHTML = `
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <strong>Complaint ID</strong>
+                        <p>${escapeHTML(complaint.id)}</p>
+                    </div>
+
+                    <div class="detail-item">
+                        <strong>Submitted by</strong>
+                        <p>${escapeHTML(complaint.student)}</p>
+                    </div>
+
+                    <div class="detail-item">
+                        <strong>Category</strong>
+                        <p>${escapeHTML(complaint.category)}</p>
+                    </div>
+
+                    <div class="detail-item">
+                        <strong>Priority</strong>
+                        <p>${escapeHTML(complaint.priority)}</p>
+                    </div>
+
+                    <div class="detail-item">
+                        <strong>Location</strong>
+                        <p>${escapeHTML(complaint.location)}</p>
+                    </div>
+
+                    <div class="detail-item">
+                        <strong>Submitted on</strong>
+                        <p>${escapeHTML(complaint.submitted)}</p>
+                    </div>
+
+                    <div class="detail-item">
+                        <strong>Current status</strong>
+                        <p>
+                            <span class="status ${getStatusClass(complaint.status)}">
+                                ${escapeHTML(complaint.status)}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <strong>Description</strong>
+                    <p>${escapeHTML(complaint.description)}</p>
+                </div>
+            `;
+
+            dialog.showModal();
+        }
+
+        // Search and filter events.
+        searchInput.addEventListener("input", renderComplaints);
+        statusFilter.addEventListener("change", renderComplaints);
+        categoryFilter.addEventListener("change", renderComplaints);
+
+        // Use event delegation for dynamically rendered controls.
+        tableBody.addEventListener("change", event => {
+            const select = event.target.closest("[data-status-id]");
+            if (!select) return;
+
+            const complaint = complaints.find(
+                item => item.id === select.dataset.statusId
+            );
+
+            if (!complaint) return;
+
+            complaint.status = select.value;
+
+            renderComplaints();
+        });
+
+        tableBody.addEventListener("click", event => {
+            const button = event.target.closest("[data-view-id]");
+            if (!button) return;
+
+            showComplaintDetails(button.dataset.viewId);
+        });
+
+        document.getElementById("close-dialog").addEventListener("click", () => {
+            dialog.close();
+        });
+
+        dialog.addEventListener("click", event => {
+            if (event.target === dialog) {
+                dialog.close();
+            }
+        });
+
+        // Initial page render.
+        renderComplaints();
+    </script>
+</body>
+</html>

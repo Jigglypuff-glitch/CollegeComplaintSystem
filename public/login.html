@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to CampusCare to submit and track college complaints.">
+
+    <title>Login | CampusCare</title>
+
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/main.js" defer></script>
+</head>
+
+<body>
+    <header class="site-header">
+        <a href="/" class="brand" aria-label="CampusCare home">
+            <span class="brand-logo">C</span>
+            CampusCare
+        </a>
+
+        <nav class="navigation" aria-label="Main navigation">
+            <a href="/">Home</a>
+            <a href="/register.html" class="button button-primary">
+                Create Account
+            </a>
+        </nav>
+    </header>
+
+    <main class="auth-layout">
+        <section class="auth-intro">
+            <p class="eyebrow" style="color: #c7d2fe;">WELCOME BACK</p>
+
+            <h1>Your campus.<br>Your voice.<br>Your impact.</h1>
+
+            <p>
+                Sign in to manage your complaints, follow their progress,
+                and stay informed about resolutions.
+            </p>
+        </section>
+
+        <section class="auth-content">
+            <div class="auth-card">
+                <h2>Sign in</h2>
+
+                <p>Enter your account details to continue.</p>
+
+                <div
+                    id="login-message"
+                    class="alert hidden"
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+                <form
+                    id="login-form"
+                    class="form"
+                    data-validate
+                    action="/api/auth/login"
+                    method="POST"
+                >
+                    <div class="form-group">
+                        <label for="email">College email address</label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@college.edu"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="button button-primary button-full"
+                    >
+                        Sign In →
+                    </button>
+                </form>
+
+                <p class="auth-switch">
+                    Don't have an account?
+                    <a href="/register.html">Create one</a>
+                </p>
+
+                <p class="auth-switch">
+                    <a href="/">← Back to home</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© <span id="current-year"></span> CampusCare.</p>
+        <p>College Complaint System</p>
+    </footer>
+</body>
+</html>
