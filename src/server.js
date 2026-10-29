@@ -1,4 +1,6 @@
+require("dotenv").config();
 
+const connectDB = require("./config/database");
 "use strict";
 
 const express = require("express");
@@ -60,7 +62,18 @@ app.use((req, res) => {
 });
 
 // Start the server.
-app.listen(PORT, "0.0.0.0", () => {
-    console.log(`CampusCare is running on port ${PORT}`);
-    console.log(`Frontend directory: ${publicDirectory}`);
-});
+async function startServer() {
+    try {
+        await connectDB();
+
+        app.listen(PORT, "0.0.0.0", () => {
+            console.log(`CampusCare is running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error("Failed to start CampusCare:", error.message);
+        process.exit(1);
+    }
+}
+
+startServer();
+
