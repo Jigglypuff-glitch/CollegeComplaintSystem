@@ -1,28 +1,34 @@
+
 {
-  "name": "college-complaint-system",
+  "name": "campuscare",
   "version": "1.0.0",
-  "private": true,
-  "description": "A web-based college complaint management system",
+  "description": "College Complaint Management System",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
+    "dev": "nodemon --exitcrash src/server.js",
     "check": "node --check src/server.js"
   },
-  "engines": {
-    "node": ">=20"
-  },
+  "keywords": [
+    "campuscare",
+    "college",
+    "complaint-management",
+    "nodejs",
+    "express",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "dotenv": "^16.6.1",
-    "express": "^4.22.3",
-    "express-rate-limit": "^8.7.2",
-    "helmet": "^8.3.0",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^8.24.7",
-    "morgan": "^1.10.0"
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.9"
   }
 }
