@@ -9,11 +9,13 @@
     <title>Create Account | CampusCare</title>
 
     <link rel="stylesheet" href="/css/styles.css">
+
     <script src="/js/main.js" defer></script>
     <script src="/js/register.js" defer></script>
 </head>
 
 <body>
+
     <header class="site-header">
         <a href="/" class="brand" aria-label="CampusCare home">
             <span class="brand-logo">C</span>
@@ -27,6 +29,7 @@
     </header>
 
     <main class="auth-layout">
+
         <section class="auth-intro">
             <p class="eyebrow" style="color: #c7d2fe;">JOIN CAMPUSCARE</p>
 
@@ -39,7 +42,9 @@
         </section>
 
         <section class="auth-content">
+
             <div class="auth-card">
+
                 <h2>Create an account</h2>
 
                 <p>Enter your details to get started.</p>
@@ -55,9 +60,9 @@
                     id="register-form"
                     class="form"
                     data-validate
-                    action="/api/auth/register"
-                    method="POST"
+                    novalidate
                 >
+
                     <div class="form-group">
                         <label for="fullName">Full name</label>
 
@@ -163,6 +168,7 @@
                     >
                         Create Account →
                     </button>
+
                 </form>
 
                 <p class="auth-switch">
@@ -173,13 +179,16 @@
                 <p class="auth-switch">
                     <a href="/">← Back to home</a>
                 </p>
+
             </div>
         </section>
+
     </main>
 
     <footer class="site-footer">
         <p>© <span id="current-year"></span> CampusCare.</p>
         <p>College Complaint System</p>
     </footer>
+
 </body>
 </html>
